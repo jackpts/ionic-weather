@@ -1,0 +1,58 @@
+$size1: 12em;
+$size2: 3.5em;
+$size3: 3em;
+$size4: 2em;
+$size5: 1.5em;
+$size6: 1em;
+
+ion-content {
+  --ion-font-family: 'Roboto', sans-serif;
+  --background: linear-gradient(#2980b9, #6dd5fa) !important;
+  --ion-text-color: #222;
+}
+ion-header {
+  --ion-text-color: #aaa;
+}
+main {
+  display: block;
+  text-align: center;
+}
+.city,
+.date,
+.description,
+.temperature,
+.icon,
+.day,
+.precipitation,
+.icon-sm,
+.hi-sm,
+.lo-sm {
+  display: block;
+  font-weight: bold;
+}
+.city {
+  font-size: $size3;
+  padding-top: .2em;
+}
+.date {
+  font-size: $size5;
+}
+.description {
+  font-size: $size3;
+}
+.temperature {
+  margin: 0;
+  padding: 0;
+  font-size: $size1;
+}
+.icon {
+  padding-top: 0;
+  font-size: $size4;
+}
+ion-grid {
+  position: fixed;
+  bottom: 0;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+}

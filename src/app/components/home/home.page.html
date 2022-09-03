@@ -18,21 +18,21 @@
 <!--    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>-->
 <!--  </div>-->
 
-  <main>
-    <span class="city">{{ city$ | async }}</span>
-    <span class="date">Mon, 3:54pm</span>
+  <ng-container *ngIf="weatherData$ | async as weather">
+    <main>
+      <span class="city">{{ city$ | async }}</span>
+      <span class="date">Mon, 3:54pm</span>
 
-    <div class="icon">
-      <img src="../../assets/d2.png" alt="">
-    </div>
+      <div class="icon">
+        <img [src]="weather.weatherEventIcons[0]" [alt]="weather.weatherTypes[0]">
+      </div>
 
-    <span class="description">Cloudy</span>
-    <span class="temperature">18°</span>
-  </main>
+      <span class="description">Cloudy</span>
+      <span class="temperature">18°</span>
+    </main>
 
-  <!-- 7 Day forecast grid -->
-  <ion-grid>
-    <ng-container *ngIf="weatherData$ | async as weather">
+    <!-- 7 Day forecast grid -->
+    <ion-grid>
       <!-- Day Row -->
       <ion-row>
         <ng-container *ngFor="let weekDay of weather.weekDays">
@@ -68,7 +68,7 @@
         <ng-container *ngFor="let minTemp of weather.tmpMins">
           <ion-col class="lo-sm">{{ minTemp }}°</ion-col>
         </ng-container>
-      </ion-row>
-    </ng-container>
-  </ion-grid>
+        </ion-row>
+    </ion-grid>
+  </ng-container>
 </ion-content>

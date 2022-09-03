@@ -1,0 +1,74 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Weather app
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+<!--  <ion-header collapse="condense">-->
+<!--    <ion-toolbar>-->
+<!--      <ion-title size="large">Blank</ion-title>-->
+<!--    </ion-toolbar>-->
+<!--  </ion-header>-->
+
+<!--  <div id="container">-->
+<!--    <strong>Ready to create an app?</strong>-->
+<!--    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>-->
+<!--  </div>-->
+
+  <main>
+    <span class="city">{{ city$ | async }}</span>
+    <span class="date">Mon, 3:54pm</span>
+
+    <div class="icon">
+      <img src="../../assets/d2.png" alt="">
+    </div>
+
+    <span class="description">Cloudy</span>
+    <span class="temperature">18°</span>
+  </main>
+
+  <!-- 7 Day forecast grid -->
+  <ion-grid>
+    <ng-container *ngIf="weatherData$ | async as weather">
+      <!-- Day Row -->
+      <ion-row>
+        <ng-container *ngFor="let weekDay of weather.weekDays">
+          <ion-col class="day">{{ weekDay }}</ion-col>
+        </ng-container>
+      </ion-row>
+
+      <!-- Chances of precipitation -->
+      <ion-row>
+        <ng-container *ngFor="let precipitation of weather.precipitations">
+          <ion-col class="precipitation">{{ precipitation }}%</ion-col>
+        </ng-container>
+      </ion-row>
+
+      <!-- weather icon -->
+      <ion-row>
+        <ng-container *ngFor="let eventIcon of weather.weatherEventIcons; let i = index">
+          <ion-col class="icon-sm">
+            <img [src]="eventIcon" [alt]="weather.weatherTypes[i]?.substr(0, 5)" [matTooltip]="weather.weatherTypes[i]" />
+          </ion-col>
+        </ng-container>
+      </ion-row>
+
+      <!-- Max Temp -->
+      <ion-row>
+        <ng-container *ngFor="let maxTemp of weather.tmpMaxs">
+          <ion-col class="hi-sm">{{ maxTemp }}°</ion-col>
+        </ng-container>
+      </ion-row>
+
+      <!-- Min Temp -->
+      <ion-row>
+        <ng-container *ngFor="let minTemp of weather.tmpMins">
+          <ion-col class="lo-sm">{{ minTemp }}°</ion-col>
+        </ng-container>
+      </ion-row>
+    </ng-container>
+  </ion-grid>
+</ion-content>

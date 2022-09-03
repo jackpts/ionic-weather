@@ -24,5 +24,6 @@ export class WeatherData {
   tmpMins: number[];
   tmpMaxs: number[];
   weatherTypes: string[];
+  weatherEventIcons: string[];
   weekDays: WeekDay[];
 }

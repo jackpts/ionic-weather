@@ -1,20 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { InputData, WeatherData, WeatherStation } from '../models';
+import { InputData, InputDataItem, WeatherData, WeatherStation } from '../models';
 import { map, tap } from 'rxjs/operators';
 import { MapTo } from '../decorators';
-import { WeekDay } from '../enums';
-
-const weekDaysMap: { [key in number]: WeekDay } = {
-  12: WeekDay.Mon,
-  36: WeekDay.Tue,
-  60: WeekDay.Wed,
-  84: WeekDay.Thu,
-  108: WeekDay.Fri,
-  132: WeekDay.Sat,
-  156: WeekDay.Sun,
-};
+import { WEEK_DAYS, WEATHER_ICONS } from '../consts';
 
 @Injectable({
   providedIn: 'root'
@@ -34,34 +24,46 @@ export class WeatherService {
     );
   }
 
-  // @MapTo(WeatherData)
-  getWeatherData(): Observable<WeatherData> {
-    const queryString = 'https://pogoda.by/api/v2/numeric-weather/6/26851/3';
+  // British Oxford id=517987, timezone=1
+  // Belarus Minsk id=26851, timezone=3
+  getWeatherData(id: number = 26851, timezone: number = 3): Observable<WeatherData> {
+    const queryString = `https://pogoda.by/api/v2/numeric-weather/6/${id}/${timezone}`;
 
     return this.http.get<WeatherData>(queryString).pipe(
-      tap((res) => {
-        console.log('serv res obj.val[0]=', Object.values(res)[0]);
-      }),
       map((result) => Object.values(result)[0]),
-      map((result) => this.mapHoursObject(result)),
+      map((result) => this.mapHoursObject(Object.values(result))),
     );
   }
 
-  private mapHoursObject(weatherObject: InputData): WeatherData {
+  private mapHoursObject(weatherObject: InputDataItem[]): WeatherData {
     const weatherData: WeatherData = {
       precipitations: [],
       tmpMins: [],
       tmpMaxs: [],
       weatherTypes: [],
+      weatherEventIcons: [],
       weekDays: [],
     };
 
-    for(let i = 12; i <= 156; i+=24) {
-      weatherData.precipitations.push(weatherObject[i].PRECIP);
-      weatherData.tmpMins.push(weatherObject[i].TMP);
-      weatherData.tmpMaxs.push(i+12 in weatherObject ? weatherObject[i+12].TMP : weatherObject[i].TMP);
-      weatherData.weatherTypes.push(weatherObject[i].TypeWeather);
-      weatherData.weekDays.push(i in weekDaysMap ? weekDaysMap[i] : null);
+    for(let i = 0; i <= weatherObject.length; i+=4) {
+      if (weatherObject[i]) {
+        weatherData.precipitations.push(weatherObject[i].PRECIP * 100);
+        weatherData.tmpMins.push(weatherObject[i].TMP);
+
+        const weatherType: string = weatherObject[i].TypeWeather;
+        weatherData.weatherTypes.push(weatherType);
+        if (weatherType in WEATHER_ICONS) {
+          weatherData.weatherEventIcons.push(WEATHER_ICONS[weatherType]);
+        }
+      }
+      if (i % 4 === 0) {
+        weatherData.weekDays.push(WEEK_DAYS[i / 4]);
+      }
+      if (i+1 in weatherObject) {
+        weatherData.tmpMaxs.push(weatherObject[i+1].TMP);
+      } else if (i in weatherObject) {
+        weatherData.tmpMaxs.push(weatherObject[i].TMP);
+      }
     }
 
     return weatherData;

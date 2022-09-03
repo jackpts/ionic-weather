@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { WeatherService } from '../services';
+import { WeatherService } from '../../services';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { WeatherData, WeatherStation } from '../models';
+import { WeatherData, WeatherStation } from '../../models';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +13,7 @@ import { WeatherData, WeatherStation } from '../models';
 })
 export class HomePage implements OnInit {
   public city$: Observable<string>;
+  public weatherData$: Observable<WeatherData>;
 
   private res;
 
@@ -34,6 +35,7 @@ export class HomePage implements OnInit {
       this.res = response;
       console.log('resp=', this.res);
     });
+    this.weatherData$ = this.weatherAPI.getWeatherData();
   }
 
 }

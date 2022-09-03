@@ -15,8 +15,6 @@ export class HomePage implements OnInit {
   public city$: Observable<string>;
   public weatherData$: Observable<WeatherData>;
 
-  private res;
-
   constructor(
     private readonly weatherAPI: WeatherService,
   ) {}
@@ -25,17 +23,11 @@ export class HomePage implements OnInit {
     this.getWeatherData();
   }
 
-  getWeatherData() {
+  private getWeatherData(): void {
     this.city$ = this.weatherAPI.getWeatherStation().pipe(
       map((weatherStation: WeatherStation) => weatherStation.city),
       shareReplay(1),
     );
-
-    this.weatherAPI.getWeatherData().subscribe((response: WeatherData) => {
-      this.res = response;
-      console.log('resp=', this.res);
-    });
     this.weatherData$ = this.weatherAPI.getWeatherData();
   }
-
 }

@@ -21,7 +21,7 @@
   <ng-container *ngIf="weatherData$ | async as weather">
     <main>
       <span class="city">{{ city$ | async }}</span>
-      <span class="date">Mon</span>
+      <span class="date">{{ weather.startDay }}</span>
 
       <div class="icon">
         <img [src]="weather.weatherEventIcons[0]" [alt]="weather.weatherTypes[0]">
@@ -69,7 +69,14 @@
         <ng-container *ngFor="let minTemp of weather.tmpMins">
           <ion-col class="lo-sm">{{ minTemp }}°</ion-col>
         </ng-container>
-        </ion-row>
+      </ion-row>
+
+      <!-- Wind -->
+      <ion-row>
+        <ng-container *ngFor="let wind of weather.wind">
+          <ion-col class="lo-sm">{{ wind }}</ion-col>
+        </ng-container>
+      </ion-row>
     </ion-grid>
   </ng-container>
 </ion-content>

@@ -12,6 +12,7 @@ export interface InputDataItem {
   WINDSP_MIN: number;
   WINDSP_MAX: number;
   TypeWeather: string;
+  WINDSP: number;
 }
 
 export interface InputData {
@@ -27,4 +28,6 @@ export class WeatherData {
   weatherTypes: string[];
   weatherEventIcons: string[];
   weekDays: WeekDay[];
+  startDay: WeekDay;
+  wind: number[];
 }

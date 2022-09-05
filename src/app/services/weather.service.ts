@@ -4,12 +4,14 @@ import { Observable } from 'rxjs';
 import { InputData, InputDataItem, WeatherData, WeatherStation } from '../models';
 import { map, tap } from 'rxjs/operators';
 import { MapTo } from '../decorators';
-import { WEEK_DAYS, WEATHER_ICONS } from '../consts';
+import { WEATHER_ICONS, WEEK_DAYS } from '../consts';
+import { WeekDay } from '../enums';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherService {
+  private currentDay: WeekDay = WeekDay.Mon;
 
   constructor(
     private http: HttpClient,
@@ -24,14 +26,22 @@ export class WeatherService {
     );
   }
 
-  // British Oxford id=517987, timezone=1
-  // Belarus Minsk id=26851, timezone=3
-  getWeatherData(id: number = 26851, timezone: number = 3): Observable<WeatherData> {
-    const queryString = `https://pogoda.by/api/v2/numeric-weather/6/${id}/${timezone}`;
+  // British Oxford id=517987
+  // Belarus Minsk id=26851
+  getWeatherData(id: number = 26851): Observable<WeatherData> {
+    const queryString = `https://pogoda.by/api/v2/numeric-weather/2/${id}`;
 
     return this.http.get<WeatherData>(queryString).pipe(
-      map((result) => Object.values(result)[0]),
-      map((result) => this.mapHoursObject(Object.values(result))),
+      tap((result: InputData) => {
+        const byKeyStartValue = (day: WeekDay): RegExpMatchArray => day.match(Object.keys(result)[0].substring(0, 2));
+        const weekDayFromAPI: WeekDay = Object.values(WeekDay).find(byKeyStartValue);
+
+        if (weekDayFromAPI) {
+          this.currentDay = weekDayFromAPI;
+        }
+      }),
+      map((result: InputData) => Object.values(result)[0]),
+      map((result: InputDataItem) => this.mapHoursObject(Object.values(result))),
     );
   }
 
@@ -44,13 +54,17 @@ export class WeatherService {
       weatherTypes: [],
       weatherEventIcons: [],
       weekDays: [],
+      startDay: this.currentDay,
+      wind: [],
     };
+    const hoursMultiplier: number = weatherObject.length / WEEK_DAYS.length;
 
-    for(let i = 0; i <= weatherObject.length; i+=4) {
+    for(let i = 0; i <= weatherObject.length; i+=hoursMultiplier) {
       if (weatherObject[i]) {
         weatherData.precipitations.push(weatherObject[i].PRECIP);
         weatherData.tmps.push(weatherObject[i].TMP);
         weatherData.tmpMins.push(weatherObject[i].TMP_MIN);
+        weatherData.wind.push(weatherObject[i].WINDSP);
 
         const weatherType: string = weatherObject[i].TypeWeather;
         weatherData.weatherTypes.push(weatherType);
@@ -58,8 +72,8 @@ export class WeatherService {
           weatherData.weatherEventIcons.push(WEATHER_ICONS[weatherType]);
         }
       }
-      if (i % 4 === 0) {
-        weatherData.weekDays.push(WEEK_DAYS[i / 4]);
+      if (i % hoursMultiplier === 0) {
+        weatherData.weekDays.push(this.getDayOfWeekByShiftNumber(i/hoursMultiplier));
       }
       if (i+1 in weatherObject) {
         weatherData.tmpMaxs.push(weatherObject[i+1].TMP_MAX);
@@ -69,5 +83,12 @@ export class WeatherService {
     }
 
     return weatherData;
+  }
+
+  private getDayOfWeekByShiftNumber(shiftNumber: number): WeekDay {
+    const currentDayPos: number = WEEK_DAYS.indexOf(this.currentDay);
+    const doubleWeekDaysArray: WeekDay[] = [...WEEK_DAYS, ...WEEK_DAYS];
+
+    return doubleWeekDaysArray[currentDayPos + shiftNumber];
   }
 }

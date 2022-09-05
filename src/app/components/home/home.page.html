@@ -21,14 +21,14 @@
   <ng-container *ngIf="weatherData$ | async as weather">
     <main>
       <span class="city">{{ city$ | async }}</span>
-      <span class="date">Mon, 3:54pm</span>
+      <span class="date">Mon</span>
 
       <div class="icon">
         <img [src]="weather.weatherEventIcons[0]" [alt]="weather.weatherTypes[0]">
       </div>
 
-      <span class="description">Cloudy</span>
-      <span class="temperature">18°</span>
+      <span class="description">{{ weather.weatherTypes[0] }}</span>
+      <span class="temperature">{{ weather.tmps[0] | number: '1.0-0'}}°</span>
     </main>
 
     <!-- 7 Day forecast grid -->
@@ -43,7 +43,8 @@
       <!-- Chances of precipitation -->
       <ion-row>
         <ng-container *ngFor="let precipitation of weather.precipitations">
-          <ion-col class="precipitation">{{ precipitation }}%</ion-col>
+          <!-- in mm -->
+          <ion-col class="precipitation">{{ precipitation}}</ion-col>
         </ng-container>
       </ion-row>
 

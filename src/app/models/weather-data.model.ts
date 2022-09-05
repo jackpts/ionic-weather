@@ -21,6 +21,7 @@ export interface InputData {
 
 export class WeatherData {
   precipitations: number[];
+  tmps: number[];
   tmpMins: number[];
   tmpMaxs: number[];
   weatherTypes: string[];

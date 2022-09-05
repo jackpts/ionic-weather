@@ -38,6 +38,7 @@ export class WeatherService {
   private mapHoursObject(weatherObject: InputDataItem[]): WeatherData {
     const weatherData: WeatherData = {
       precipitations: [],
+      tmps: [],
       tmpMins: [],
       tmpMaxs: [],
       weatherTypes: [],
@@ -47,8 +48,9 @@ export class WeatherService {
 
     for(let i = 0; i <= weatherObject.length; i+=4) {
       if (weatherObject[i]) {
-        weatherData.precipitations.push(weatherObject[i].PRECIP * 100);
-        weatherData.tmpMins.push(weatherObject[i].TMP);
+        weatherData.precipitations.push(weatherObject[i].PRECIP);
+        weatherData.tmps.push(weatherObject[i].TMP);
+        weatherData.tmpMins.push(weatherObject[i].TMP_MIN);
 
         const weatherType: string = weatherObject[i].TypeWeather;
         weatherData.weatherTypes.push(weatherType);
@@ -60,9 +62,9 @@ export class WeatherService {
         weatherData.weekDays.push(WEEK_DAYS[i / 4]);
       }
       if (i+1 in weatherObject) {
-        weatherData.tmpMaxs.push(weatherObject[i+1].TMP);
+        weatherData.tmpMaxs.push(weatherObject[i+1].TMP_MAX);
       } else if (i in weatherObject) {
-        weatherData.tmpMaxs.push(weatherObject[i].TMP);
+        weatherData.tmpMaxs.push(weatherObject[i].TMP_MAX);
       }
     }
 

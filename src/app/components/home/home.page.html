@@ -18,6 +18,10 @@
 <!--    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>-->
 <!--  </div>-->
 
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ng-container *ngIf="weatherData$ | async as weather">
     <main>
       <span class="city">{{ city$ | async }}</span>

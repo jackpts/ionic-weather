@@ -19,15 +19,24 @@ export class HomePage implements OnInit {
     private readonly weatherAPI: WeatherService,
   ) {}
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
+    this.getCity();
     this.getWeatherData();
   }
 
-  private getWeatherData(): void {
+  doRefresh(event): void {
+    this.getWeatherData();
+    this.weatherData$.subscribe(() => event.target.complete());
+  }
+
+  private getCity(): void {
     this.city$ = this.weatherAPI.getWeatherStation().pipe(
       map((weatherStation: WeatherStation) => weatherStation.city),
       shareReplay(1),
     );
+  }
+
+  private getWeatherData(): void {
     this.weatherData$ = this.weatherAPI.getWeatherData();
   }
 }
